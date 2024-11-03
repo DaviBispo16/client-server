@@ -1,6 +1,9 @@
 import { UserRepository } from "../repositories/UserRepository";
 import { Knex } from "knex"
 import { Request, Response } from "express";
+import brypt from "bcrypt";
+import {v4 as uuidv4} from "uuid";
+import "dotenv/config";
 
 export class UserController {
     private userRepository: UserRepository;
@@ -9,13 +12,16 @@ export class UserController {
         this.userRepository = new UserRepository(db);
     }
 
+    private readonly saltRounds = parseInt(process.env.SALT_ROUNDS || '10', 10);
+
     async create(req: Request, res: Response) {
-        const {username, password} = req.body;
+        const {username, email, password} = req.body;
         try {
-            const newUser = await this.userRepository.createUser(username, password)
+            const encryptedPassword = await brypt.hash(password, this.saltRounds);
+            const newUser = await this.userRepository.createUser(uuidv4(), username, email, encryptedPassword);
             res.status(201).json(newUser);
         } catch (error) {
-            res.status(500).json({error: "Error to create user"});
+            res.status(500).json({error: `${error}`});
         }
     }
 

@@ -7,8 +7,8 @@ export class UserRepository {
       this.db = db;
     }
 
-    async createUser(username: string, password: string) {
-        const [newUser] = await this.db("users").insert({username, password})
+    async createUser(id: string, username: string, email: string, password: string) {
+        const [newUser] = await this.db("users").insert({id, username, email, password})
         .returning("*");
         return newUser;
     }
