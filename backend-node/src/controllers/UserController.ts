@@ -14,14 +14,16 @@ export class UserController {
 
     private readonly saltRounds = parseInt(process.env.SALT_ROUNDS || '10', 10);
 
-    async create(req: Request, res: Response) {
+    async create(req: Request, res: Response): Promise<void> {
         const {username, email, password} = req.body;
         try {
             const encryptedPassword = await brypt.hash(password, this.saltRounds);
             const newUser = await this.userRepository.createUser(uuidv4(), username, email, encryptedPassword);
             res.status(201).json(newUser);
+            return;
         } catch (error) {
             res.status(500).json({error: `${error}`});
+            return;
         }
     }
 
