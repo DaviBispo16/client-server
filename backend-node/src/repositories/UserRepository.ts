@@ -22,4 +22,9 @@ export class UserRepository {
       const user = (await this.db("users").where({id}).first());
       return user;
     }
+
+    async findUserByEmail(email: string) {
+      const user = (await this.db("users").where({email}).first());
+      return user;
+    }
 }

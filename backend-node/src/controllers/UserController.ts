@@ -47,4 +47,28 @@ export class UserController {
             res.status(500).json({error: "Error to search user"});
         }
     }
+
+    async loginUser(req: Request, res: Response): Promise<void> {
+        const {email, password} = req.body;
+        try {
+            const user = await this.userRepository.findUserByEmail(email);
+            if (!user) {
+                res.status(404).json({message: "User not authorized"});
+                return;
+            }
+
+            const isPasswordValid = await brypt.compare(password, user.password);
+            if (!isPasswordValid) {
+                res.status(401).json({message: "User not authorized"});
+                return;
+            }
+
+            res.status(200).json({user});
+            return;
+
+        } catch (error) {
+            res.status(500).json({error: `${error}`});
+            return;
+        }
+    }
 }
