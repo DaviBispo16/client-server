@@ -38,17 +38,20 @@ export class UserController {
         }
     }
 
-    async getUserById(req: Request, res: Response) {
+    async getUserById(req: Request, res: Response): Promise<void> {
         const {id} = req.params
         try {
             const user = await this.userRepository.findUserById(id);
             if (user) {
                 res.status(200).json(user);
+                return;
             } else {
                 res.status(404).json({message: "User not found"});
+                return;
             }
         } catch (error) {
             res.status(500).json({error: "Error to search user"});
+            return;
         }
     }
 
