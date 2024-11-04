@@ -27,12 +27,14 @@ export class UserController {
         }
     }
 
-    async getAllUsers(req: Request, res: Response) {
+    async getAllUsers(req: Request, res: Response): Promise<void> {
         try {
             const users = await this.userRepository.getAllUsers();
             res.status(200).json(users);
+            return;
         } catch (error) {
             res.status(500).json({error: "Error get users"});
+            return;
         }
     }
 
